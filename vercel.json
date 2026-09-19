@@ -1,0 +1,6 @@
+{
+  "projects": [
+    { "name": "api-r3dm", "rootDirectory": "api" },
+    { "name": "panel-r3dm", "rootDirectory": "panel" }
+  ]
+}
