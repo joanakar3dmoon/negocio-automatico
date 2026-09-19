@@ -21,3 +21,11 @@ services:
     plan: free
     databaseName: negocio_automatico
     databaseUser: negocio_automatico
+
+  - type: web
+    name: negocio-automatico-dashboard
+    runtime: static
+    rootDir: dashboard
+    buildCommand: echo "Static dashboard ready"
+    staticPublishPath: .
+    plan: free

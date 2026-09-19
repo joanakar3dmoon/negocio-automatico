@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#07111f" />
+  <title>Atmos — Weather Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark">✦</span><span>atmos</span></div>
+      <nav aria-label="Main navigation">
+        <a class="nav-link active" href="#overview"><span>◉</span> Overview</a>
+        <a class="nav-link" href="#forecast"><span>◌</span> Forecast</a>
+        <a class="nav-link" href="#details"><span>⌁</span> Details</a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="mini-orb">☼</div>
+        <p>Weather, made clear.</p>
+        <small>Data by Open-Meteo</small>
+      </div>
+    </aside>
+
+    <section class="content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">LIVE CONDITIONS</p>
+          <h1>Good morning, <span>explorer.</span></h1>
+        </div>
+        <div class="actions">
+          <form id="search-form" class="search-box" role="search">
+            <span aria-hidden="true">⌕</span>
+            <input id="city-search" type="search" placeholder="Search a city..." aria-label="Search for a city" autocomplete="off" />
+            <button type="submit">Search</button>
+          </form>
+          <button id="location-button" class="icon-button" title="Use my location" aria-label="Use my location">⌖</button>
+        </div>
+      </header>
+
+      <div id="status" class="status" role="status" aria-live="polite"></div>
+      <section id="overview" class="hero-grid">
+        <article class="current-card panel">
+          <div class="card-heading"><span id="current-label">CURRENTLY</span><span id="updated-at">—</span></div>
+          <div class="current-main">
+            <div><p id="current-city" class="city">Lisbon, PT</p><p id="current-date" class="date">Loading...</p></div>
+            <div class="temperature"><span id="current-temp">—</span><sup>°</sup></div>
+          </div>
+          <div class="weather-summary"><span id="current-icon" class="weather-icon">☀</span><div><strong id="current-condition">Loading conditions</strong><p>Feels like <span id="feels-like">—</span>°</p></div></div>
+          <div class="sun-track"><div><span>Sunrise</span><strong id="sunrise">—</strong></div><div class="track"><i></i></div><div class="align-right"><span>Sunset</span><strong id="sunset">—</strong></div></div>
+        </article>
+        <article class="air-card panel">
+          <div class="card-heading"><span>AIR QUALITY</span><span class="dot good"></span></div>
+          <div class="air-score"><span id="air-score">—</span><small>/ 100</small></div>
+          <p id="air-label" class="air-label">Loading air quality</p>
+          <div class="air-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+          <p class="muted">PM2.5 concentration</p>
+        </article>
+      </section>
+
+      <section id="details" class="metrics-grid">
+        <article class="metric panel"><span class="metric-icon">♨</span><div><p>Humidity</p><strong id="humidity">—</strong><small>Relative humidity</small></div></article>
+        <article class="metric panel"><span class="metric-icon">≋</span><div><p>Wind</p><strong id="wind">—</strong><small id="wind-direction">—</small></div></article>
+        <article class="metric panel"><span class="metric-icon">◒</span><div><p>Precipitation</p><strong id="precipitation">—</strong><small>Last hour</small></div></article>
+        <article class="metric panel"><span class="metric-icon">◉</span><div><p>UV Index</p><strong id="uv-index">—</strong><small id="uv-label">—</small></div></article>
+      </section>
+
+      <section id="forecast" class="forecast-section">
+        <div class="section-heading"><div><p class="eyebrow">LOOKING AHEAD</p><h2>7-day forecast</h2></div><div class="unit-toggle" role="group" aria-label="Temperature unit"><button class="unit active" data-unit="celsius">°C</button><button class="unit" data-unit="fahrenheit">°F</button></div></div>
+        <div id="forecast-list" class="forecast-list"></div>
+      </section>
+      <footer><span>Atmos dashboard</span><span>Updated automatically · <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo API</a></span></footer>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
