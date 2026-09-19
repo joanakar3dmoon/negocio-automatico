@@ -1,22 +1,47 @@
 # negocio-automatico
 
-## Weather dashboard
+Aplicación con API FastAPI y panel Next.js para gestionar servicios, pedidos y pagos personales divididos en 50% inicial y 50% final. No integra Stripe ni PayPal.
 
-The `dashboard/` folder contains a responsive weather dashboard powered by the public [Open-Meteo](https://open-meteo.com/) weather and air-quality APIs. It requires no API key.
+## API local
 
-### Run locally
-
-From the repository root:
+Desde la raíz del repositorio:
 
 ```bash
-cd dashboard
-python -m http.server 8080
+python -m venv .venv
+source .venv/bin/activate
+pip install -r api/requirements.txt
+uvicorn api.main:app --reload
 ```
 
-Open http://localhost:8080. The dashboard supports city search, browser geolocation, Celsius/Fahrenheit units, current conditions, air quality, metrics, and a seven-day forecast.
+La documentación está en `http://localhost:8000/docs` y la comprobación de salud en `/health`.
 
-### Deploy with Render
+Credenciales de demostración: `admin@r3dm.com` / `admin123` y `cliente@r3dm.com` / `cliente123`. Cámbialas antes de usar el sistema en producción y define `JWT_SECRET`.
 
-The root `render.yaml` now defines both the existing API and a static dashboard service. Create a new Blueprint in Render and select this repository. The dashboard will be published as `negocio-automatico-dashboard.onrender.com` (or the URL assigned by Render).
+## Panel local
 
-Weather data is fetched directly in the browser from Open-Meteo, so no environment variable or API key is required.
+```bash
+cd panel
+npm install
+npm run dev
+```
+
+Para conectar el panel con una API remota, define `NEXT_PUBLIC_API_URL` en Vercel, por ejemplo `https://TU-API.onrender.com`. Para desarrollo local puede omitirse si el panel y la API están detrás del mismo proxy.
+
+## Despliegue
+
+### Render
+
+Crea un Blueprint seleccionando este repositorio. `render.yaml` publica la API con `uvicorn api.main:app` y conserva el dashboard estático existente. Define `CORS_ORIGINS` con la URL exacta del panel de Vercel, por ejemplo `https://panel-r3dm.vercel.app`.
+
+### Vercel
+
+Crea un proyecto Vercel apuntando al directorio `panel` (o configura `Root Directory` como `panel`). El archivo `panel/vercel.json` ya define Next.js. Añade `NEXT_PUBLIC_API_URL` con la URL pública de Render y ejecuta el despliegue.
+
+## Flujo de pagos
+
+1. El cliente inicia sesión y crea un pedido desde Servicios.
+2. En Pagos consulta CaixaBank, Revolut, Bizum o tarjeta manual.
+3. El admin confirma manualmente el 50% inicial cuando lo recibe.
+4. El admin confirma manualmente el 50% final al entregar el servicio.
+
+Los datos actuales de pago son placeholders y deben sustituirse por los datos reales mediante variables seguras antes de publicar.

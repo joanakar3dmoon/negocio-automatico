@@ -3,8 +3,9 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 from passlib.context import CryptContext
 from .models import User, Role
+import os
 
-SECRET = "superclave"
+SECRET = os.getenv("JWT_SECRET", "superclave")
 ALGO = "HS256"
 
 oauth2 = OAuth2PasswordBearer(tokenUrl="login")
@@ -31,7 +32,7 @@ def usuario_actual(token: str = Depends(oauth2)):
         data = jwt.decode(token, SECRET, algorithms=[ALGO])
         email = data["email"]
         return USERS_DB[email]
-    except:
+    except Exception:
         raise HTTPException(status_code=401, detail="Token inválido")
 
 def requiere_admin(user: User = Depends(usuario_actual)):
