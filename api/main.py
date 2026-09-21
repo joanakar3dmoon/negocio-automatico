@@ -6,6 +6,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from .auth import autenticar, crear_token, requiere_admin, usuario_actual
 from .bots import bot_estado_pedido, bot_verificador_primer_pago, bot_verificador_segundo_pago
+from .email import enviar_email_confirmacion_pago, enviar_email_pedido_creado
 from .models import Pedido, PedidoCreate, Servicio, User
 from .payments import PEDIDOS_DB, SERVICIOS_DB, generar_instrucciones_pago
 
@@ -57,6 +58,8 @@ def crear_pedido(pedido_data: PedidoCreate, user: User = Depends(usuario_actual)
         raise HTTPException(status_code=404, detail="Servicio no encontrado")
     pedido = Pedido(**pedido_data.model_dump(), cliente_email=user.email)
     PEDIDOS_DB[pedido.id] = pedido
+    servicio = SERVICIOS_DB[pedido.servicio_id]
+    enviar_email_pedido_creado(pedido, servicio, user.email)
     return pedido
 
 
@@ -78,6 +81,7 @@ def instrucciones_pago(pedido_id: int, user: User = Depends(usuario_actual)):
 def confirmar_50_inicial(pedido_id: int, admin: User = Depends(requiere_admin)):
     pedido = bot_verificador_primer_pago(obtener_pedido(pedido_id), confirmado=True)
     PEDIDOS_DB[pedido_id] = pedido
+    enviar_email_confirmacion_pago(pedido, "50% inicial")
     return pedido
 
 
@@ -85,6 +89,7 @@ def confirmar_50_inicial(pedido_id: int, admin: User = Depends(requiere_admin)):
 def confirmar_50_final(pedido_id: int, admin: User = Depends(requiere_admin)):
     pedido = bot_verificador_segundo_pago(obtener_pedido(pedido_id), confirmado=True)
     PEDIDOS_DB[pedido_id] = pedido
+    enviar_email_confirmacion_pago(pedido, "50% final")
     return pedido
 
 
