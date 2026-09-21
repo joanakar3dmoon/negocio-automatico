@@ -1,37 +1,42 @@
 "use client";
-import { useState } from "react";
+
+import { FormEvent, useState } from "react";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [pass, setPass] = useState("");
-  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
-  const entrar = async (event) => {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setError("");
-    const data = new URLSearchParams({ username: email, password: pass });
-    const base = process.env.NEXT_PUBLIC_API_URL || "";
-    const res = await fetch(`${base}/login`, { method: "POST", body: data });
-    const json = await res.json();
-    if (!res.ok) {
-      setError(json.detail || "No se pudo iniciar sesión");
-      return;
+    const data = new FormData(event.currentTarget);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/login`, {
+      method: "POST",
+      body: data,
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      localStorage.setItem("token", result.token);
+      setMessage("Sesión iniciada correctamente.");
+    } else {
+      setMessage(result.detail || "No se pudo iniciar sesión.");
     }
-    localStorage.setItem("token", json.token);
-    localStorage.setItem("role", json.role);
-    localStorage.setItem("email", json.email);
-    window.location.href = "/servicios";
-  };
+  }
 
   return (
-    <main>
-      <h2>Login</h2>
-      <form onSubmit={entrar}>
-        <input required placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
-        <input required placeholder="Password" type="password" value={pass} onChange={e => setPass(e.target.value)} />
-        <button type="submit">Entrar</button>
+    <section className="card narrow">
+      <h1>Iniciar sesión</h1>
+      <form onSubmit={submit}>
+        <label>
+          Email
+          <input name="username" type="email" required />
+        </label>
+        <label>
+          Contraseña
+          <input name="password" type="password" required />
+        </label>
+        <button className="button">Entrar</button>
       </form>
-      {error && <p role="alert">{error}</p>}
-    </main>
+      {message && <p>{message}</p>}
+    </section>
   );
 }

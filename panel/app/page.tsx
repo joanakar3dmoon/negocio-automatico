@@ -1,9 +1,15 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
-    <main>
-      <h1>Panel maestro r3dm</h1>
-      <p>Gestiona servicios, pedidos y confirmaciones de pago desde un único panel.</p>
-      <a href="/login">Iniciar sesión</a>
-    </main>
+    <section className="hero">
+      <p className="eyebrow">NEGOCIO AUTOMÁTICO</p>
+      <h1>Servicios creativos, pagos claros.</h1>
+      <p>Gestiona tus servicios con un prepago del 50% y el 50% restante a la entrega final.</p>
+      <div className="actions">
+        <Link className="button" href="/login">Iniciar sesión</Link>
+        <Link className="button secondary" href="/servicios">Ver servicios</Link>
+      </div>
+    </section>
   );
 }

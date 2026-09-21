@@ -1,6 +1,11 @@
 {
-  "projects": [
-    { "name": "api-r3dm", "rootDirectory": "api" },
-    { "name": "panel-r3dm", "rootDirectory": "panel" }
+  "version": 2,
+  "builds": [
+    { "src": "api/main.py", "use": "@vercel/python" },
+    { "src": "panel/package.json", "use": "@vercel/next" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "api/main.py" },
+    { "src": "/(.*)", "dest": "panel/$1" }
   ]
 }

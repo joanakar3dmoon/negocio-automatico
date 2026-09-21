@@ -1,31 +1,37 @@
 "use client";
+
 import { useEffect, useState } from "react";
 
-export default function ServiciosPage() {
-  const [servicios, setServicios] = useState([]);
-  const [mensaje, setMensaje] = useState("");
-  const base = process.env.NEXT_PUBLIC_API_URL || "";
+type Servicio = {
+  id: number;
+  nombre: string;
+  precio_total: number;
+};
+
+export default function Servicios() {
+  const [items, setItems] = useState<Servicio[]>([]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    fetch(`${base}/servicios`, { headers: { Authorization: `Bearer ${token}` } })
-      .then(async res => res.ok ? res.json() : Promise.reject(new Error("Sesión no válida")))
-      .then(setServicios).catch(error => setMensaje(error.message));
-  }, [base]);
-
-  const crearPedido = async (servicio) => {
-    const token = localStorage.getItem("token");
-    const cliente_email = localStorage.getItem("email");
-    const pedido = { id: Date.now(), servicio_id: servicio.id, cliente_email, metodo_pago: "bizum" };
-    const res = await fetch(`${base}/pedidos`, { method: "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: JSON.stringify(pedido) });
-    setMensaje(res.ok ? `Pedido ${pedido.id} creado. Consulta sus instrucciones en Pagos.` : "No se pudo crear el pedido");
-  };
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/servicios`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` },
+    })
+      .then((r) => (r.ok ? r.json() : []))
+      .then(setItems);
+  }, []);
 
   return (
-    <main>
-      <h2>Servicios disponibles</h2>
-      {mensaje && <p>{mensaje}</p>}
-      <ul>{servicios.map(s => <li key={s.id}>{s.nombre} — {s.precio_total} € <button onClick={() => crearPedido(s)}>Crear pedido</button></li>)}</ul>
-    </main>
+    <section>
+      <h1>Servicios</h1>
+      <div className="grid">
+        {items.map((s) => (
+          <article className="card" key={s.id}>
+            <h2>{s.nombre}</h2>
+            <p className="price">{s.precio_total.toFixed(2)} €</p>
+            <p>50% inicial: {(s.precio_total / 2).toFixed(2)} €</p>
+            <p>50% final a la entrega.</p>
+          </article>
+        ))}
+      </div>
+    </section>
   );
 }
